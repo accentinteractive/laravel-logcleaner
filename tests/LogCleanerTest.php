@@ -57,6 +57,18 @@ class LogCleanerTest extends TestCase
     }
 
     /** @test */
+    public function itDoesNotTrimLogsIfNotEnabled(): void
+    {
+        $this->createSingleLog($this->logLinesToKeep + 10);
+        config(['logcleaner.trimming_enabled' => false]);
+
+        Artisan::call('logcleaner:run');
+
+        $numlines = count(file(Storage::path($this->getDailyLogFilePath())));
+        $this->assertEquals($this->logLinesToKeep + 10, $numlines);
+    }
+
+    /** @test */
     public function itDoesNotTrimShortLogs(): void
     {
         $this->createSingleLog($this->logLinesToKeep - 1);
@@ -78,6 +90,20 @@ class LogCleanerTest extends TestCase
         $logFiles = Storage::files(self::LOG_FOLDER_NAME);
         $numLogFiles = count($logFiles);
         $this->assertEquals($this->logFilesToKeep, $numLogFiles);
+    }
+
+    /** @test */
+    public function itDoesNotDeleteLogsIfNotEnabled(): void
+    {
+        $this->createDailyLogs(3);
+        config(['logcleaner.deleting_enabled' => false]);
+        config(['logcleaner.log_files_to_keep' => 0]);
+
+        Artisan::call('logcleaner:run');
+
+        $logFiles = Storage::files(self::LOG_FOLDER_NAME);
+        $numLogFiles = count($logFiles);
+        $this->assertEquals(3, $numLogFiles);
     }
 
     /** @test */

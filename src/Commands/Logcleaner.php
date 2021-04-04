@@ -57,6 +57,11 @@ class Logcleaner extends Command
      */
     protected function trimLogFiles(Collection $logFiles): string
     {
+        if (config('logcleaner.trimming_enabled') == false) {
+            $this->info('Log trimming is not enabled. You can enabling it by setting LOGCLEANER_TRIMMING_ENABLED to true in your .env file');
+            return 'Skipping trimming.';
+        }
+
         if ($this->option('dry-run') == true) {
             return 'Would trim ' . $logFiles->count() . ' logfiles';
         }
@@ -80,6 +85,11 @@ class Logcleaner extends Command
      */
     protected function deleteOldLogFiles(Collection $logFiles): string
     {
+        if (config('logcleaner.deleting_enabled') == false) {
+            $this->info('Deleting old log files is not enabled. You can enabling it by setting LOGCLEANER_DELETING_ENABLED to true in your .env file');
+            return 'Skipping deleting old log files.';
+        }
+
         if ($this->option('dry-run') == true) {
             return 'Found logs ' . json_encode($logFiles->toArray());
         }
