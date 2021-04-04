@@ -95,6 +95,44 @@ class LogCleanerTest extends TestCase
     }
 
     /** @test */
+    public function itCanExcludeFilesToDeletes(): void
+    {
+        $logPath = $this->getLogPath();
+        touch($logPath . 'logfile.log', time() + 1);
+        touch($logPath . 'logfile2.log', time() + 2);
+        config(['logcleaner.log_files_to_keep' => 0]);
+        config(['logcleaner.exclude' => [
+            'logfile.log',
+        ]]);
+
+        Artisan::call('logcleaner:run');
+
+        $logFiles = Storage::files(self::LOG_FOLDER_NAME);
+        $numLogFiles = count($logFiles);
+        $this->assertEquals(1, $numLogFiles);
+    }
+
+    /** @test */
+    public function excludeFileNamesSupportWildcards(): void
+    {
+        $logPath = $this->getLogPath();
+        touch($logPath . 'logfile.log', time() + 1);
+        touch($logPath . 'logfile2.log', time() + 2);
+        touch($logPath . 'somefile.txt', time() + 3);
+        config(['logcleaner.log_files_to_keep' => 0]);
+        config(['logcleaner.exclude' => [
+            'logfile2*',
+            '*.txt',
+        ]]);
+
+        Artisan::call('logcleaner:run');
+
+        $logFiles = Storage::files(self::LOG_FOLDER_NAME);
+        $numLogFiles = count($logFiles);
+        $this->assertEquals(2, $numLogFiles);
+    }
+
+    /** @test */
     public function itDoesNotDeleteAnyLogsInDryRunMode(): void
     {
         $this->createSingleLog(1);

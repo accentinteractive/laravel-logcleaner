@@ -58,7 +58,7 @@ class Logcleaner extends Command
     protected function trimLogFiles(Collection $logFiles): string
     {
         if ($this->option('dry-run') == true) {
-            return 'Would trim '.$logFiles->count().' logfiles';
+            return 'Would trim ' . $logFiles->count() . ' logfiles';
         }
 
         $msg = '';
@@ -110,8 +110,11 @@ class Logcleaner extends Command
         });
 
         $logFiles = collect([]);
-        foreach ($fileNames as $file) {
-            $logFiles->put($file->getMTime(), $file);
+        foreach ($fileNames as $logFile) {
+            /* @var \Symfony\Component\Finder\SplFileInfo $logFile */
+            if ($this->fileShouldBeProcessed($logFile->getFilename())) {
+                $logFiles->put($logFile->getMTime(), $logFile);
+            }
         }
 
         return $logFiles->sortDesc();
@@ -174,24 +177,24 @@ class Logcleaner extends Command
      */
     protected function directoryMap($sourceDirectory, $directoryDepth = 0, $includeHidden = false)
     {
-        if (! file_exists($sourceDirectory)) {
+        if ( ! file_exists($sourceDirectory)) {
             return [];
         }
 
         if (($fp = opendir($sourceDirectory))) {
             $filedata = [];
             $new_depth = $directoryDepth - 1;
-            $sourceDirectory = rtrim($sourceDirectory, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+            $sourceDirectory = rtrim($sourceDirectory, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 
             while (false !== ($file = readdir($fp))) {
                 if ($file === '.' or $file === '..' or ($includeHidden === false && $file[0] === '.')) {
                     continue;
                 }
 
-                is_dir($sourceDirectory.$file) && $file .= DIRECTORY_SEPARATOR;
+                is_dir($sourceDirectory . $file) && $file .= DIRECTORY_SEPARATOR;
 
-                if (($directoryDepth < 1 or $new_depth > 0) && is_dir($sourceDirectory.$file)) {
-                    $filedata[$file] = $this->directoryMap($sourceDirectory.$file, $new_depth, $includeHidden);
+                if (($directoryDepth < 1 or $new_depth > 0) && is_dir($sourceDirectory . $file)) {
+                    $filedata[ $file ] = $this->directoryMap($sourceDirectory . $file, $new_depth, $includeHidden);
                 } else {
                     $filedata[] = $file;
                 }
@@ -203,4 +206,22 @@ class Logcleaner extends Command
         }
     }
 
+    /**
+     * Do not process if filename is in config('logcleaner.exclude').
+     * Wildcards are supported
+     *
+     * @param string $filename
+     *
+     * @return bool
+     */
+    protected function fileShouldBeProcessed(string $filename): bool
+    {
+        foreach (config('logcleaner.exclude') as $fileToExclude) {
+            if (fnmatch('*' . ltrim($fileToExclude, '*'), $filename)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
