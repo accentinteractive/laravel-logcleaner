@@ -16,6 +16,11 @@ class LaravelLogcleanerServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../config/logcleaner.php' => config_path('logcleaner.php'),
         ], 'config');
+
+        // Publishing the translation files.
+        /*$this->publishes([
+            __DIR__.'/../resources/lang' => resource_path('lang/vendor/laravel-logcleaner'),
+        ], 'lang');*/
     }
 
     /**
