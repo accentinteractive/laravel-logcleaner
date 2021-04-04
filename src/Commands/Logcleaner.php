@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\File;
 class Logcleaner extends Command
 {
 
-    const LOG_FILE_EXTENSION = '.log';
+    const LOG_FILE_EXTENSION = 'log';
 
     /**
      * The name and signature of the console command.
@@ -40,31 +40,31 @@ class Logcleaner extends Command
         $logPath = str_replace(basename($logPath), '', $logPath);
 
         $this->comment('Deleting old log files...');
-        $msg = $this->deleteOldLogFiles($logPath, $this->getLaravelLogFilesCollection($logPath));
+        $msg = $this->deleteOldLogFiles($this->getLaravelLogFilesCollection($logPath));
         $this->line($msg);
 
         $this->comment('Trimming log files...');
-        $msg = $this->trimLogFiles($logPath, $this->getLaravelLogFilesCollection($logPath));
+        $msg = $this->trimLogFiles($this->getLaravelLogFilesCollection($logPath));
         $this->line($msg);
     }
 
     /**
      * Trim each log file to a given number of lines.
      *
-     * @param string $logPath
      * @param Collection $logFiles
      *
      * @return string
      */
-    protected function trimLogFiles(string $logPath, Collection $logFiles): string
+    protected function trimLogFiles(Collection $logFiles): string
     {
         if ($this->option('dry-run') == true) {
-            return 'Would trimlogfiles at ' . $logPath;
+            return 'Would trim '.$logFiles->count().' logfiles';
         }
 
         $msg = '';
         foreach ($logFiles as $logFile) {
-            $msg .= $this->trimFile($logPath . $logFile) . PHP_EOL;
+            /* @var \Symfony\Component\Finder\SplFileInfo $logFile */
+            $msg .= $this->trimFile($logFile->getRealPath()) . PHP_EOL;
         }
 
         return $msg;
@@ -74,21 +74,21 @@ class Logcleaner extends Command
      * Delete logfiles, except a given amount of newest file.
      * The number of logfiles to keep is set in config.
      *
-     * @param string $logPath
      * @param Collection $logFiles
      *
      * @return string
      */
-    protected function deleteOldLogFiles(string $logPath, Collection $logFiles): string
+    protected function deleteOldLogFiles(Collection $logFiles): string
     {
         if ($this->option('dry-run') == true) {
             return 'Found logs ' . json_encode($logFiles->toArray());
         }
 
         $msg = '';
-        $logFiles = $logFiles->splice(config('logcleaner.log_files_to_keep'));
-        foreach ($logFiles as $logfile) {
-            $msg .= $this->deleteFile($logPath . $logfile) . PHP_EOL;
+        $logFilesToDelete = $logFiles->splice(config('logcleaner.log_files_to_keep'));
+        foreach ($logFilesToDelete as $logFile) {
+            /* @var \Symfony\Component\Finder\SplFileInfo $logFile */
+            $msg .= $this->deleteFile($logFile->getRealPath()) . PHP_EOL;
         }
 
         return $msg;
@@ -104,14 +104,14 @@ class Logcleaner extends Command
      */
     protected function getLaravelLogFilesCollection(string $logPath)
     {
-        $fileNames = $this->directoryMap($logPath, 1);
+        $fileNames = File::files($logPath);
         $fileNames = collect($fileNames)->filter(function ($item) {
-            return substr($item, -4) == self::LOG_FILE_EXTENSION;
+            return $item->getExtension() == self::LOG_FILE_EXTENSION;
         });
 
         $logFiles = collect([]);
-        foreach ($fileNames as $item) {
-            $logFiles->put(filemtime($logPath . $item), $item);
+        foreach ($fileNames as $file) {
+            $logFiles->put($file->getMTime(), $file);
         }
 
         return $logFiles->sortDesc();
