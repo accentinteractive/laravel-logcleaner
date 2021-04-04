@@ -1,5 +1,7 @@
-build
-composer.lock
-docs
-vendor
-coverage
+/build
+/composer.lock
+/vendor
+/coverage
+/tests/testlogs
+/.phpunit.result.cache
+/.idea
