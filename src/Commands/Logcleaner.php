@@ -16,7 +16,7 @@ class Logcleaner extends Command
      *
      * @var string
      */
-    protected $signature = 'logcleaner:run {--d|dry-run : Run without actually cleaning any logs}';
+    protected $signature = 'logcleaner:run {--d|dry-run : Run without actually cleaning any logs} {--keeplines= : The number of lines to keep when trimming log files} {--keepfiles= : The number of log files to keep when deleting old log files}';
 
     /**
      * The console command description.
@@ -59,6 +59,7 @@ class Logcleaner extends Command
     {
         if (config('logcleaner.trimming_enabled') == false) {
             $this->info('Log trimming is not enabled. You can enabling it by setting LOGCLEANER_TRIMMING_ENABLED to true in your .env file');
+
             return 'Skipping trimming.';
         }
 
@@ -87,6 +88,7 @@ class Logcleaner extends Command
     {
         if (config('logcleaner.deleting_enabled') == false) {
             $this->info('Deleting old log files is not enabled. You can enabling it by setting LOGCLEANER_DELETING_ENABLED to true in your .env file');
+
             return 'Skipping deleting old log files.';
         }
 
@@ -95,7 +97,7 @@ class Logcleaner extends Command
         }
 
         $msg = '';
-        $logFilesToDelete = $logFiles->splice(config('logcleaner.log_files_to_keep'));
+        $logFilesToDelete = $logFiles->splice($this->getFilesToKeep());
         foreach ($logFilesToDelete as $logFile) {
             /* @var \Symfony\Component\Finder\SplFileInfo $logFile */
             $msg .= $this->deleteFile($logFile->getRealPath()) . PHP_EOL;
@@ -139,7 +141,7 @@ class Logcleaner extends Command
      */
     protected function trimFile(string $logPath): string
     {
-        $logLinesToKeep = config('logcleaner.log_lines_to_keep');
+        $logLinesToKeep = $this->getLogLinesToKeep();
 
         if ( ! file_exists($logPath) || ! is_file($logPath)) {
             return 'File ' . basename($logPath) . ' could not be found';
@@ -233,5 +235,29 @@ class Logcleaner extends Command
         }
 
         return true;
+    }
+
+    /**
+     * @return int
+     */
+    protected function getLogLinesToKeep(): int
+    {
+        if ($this->option('keeplines')) {
+            return (int) $this->option('keeplines');
+        }
+
+        return config('logcleaner.log_lines_to_keep');
+    }
+
+    /**
+     * @return \Illuminate\Config\Repository|\Illuminate\Contracts\Foundation\Application|mixed
+     */
+    protected function getFilesToKeep()
+    {
+        if ($this->option('keepfiles')) {
+            return (int) $this->option('keepfiles');
+        }
+
+        return config('logcleaner.log_files_to_keep');
     }
 }

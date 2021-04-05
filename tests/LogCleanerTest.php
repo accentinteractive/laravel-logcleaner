@@ -170,6 +170,29 @@ class LogCleanerTest extends TestCase
         $this->assertEquals(1, count($logFiles));
     }
 
+    /** @test */
+    public function itTakesAnOptionKeeplines(): void
+    {
+        $this->createSingleLog(10);
+
+        Artisan::call('logcleaner:run', ['--keeplines' => 2]);
+
+        $numlines = count(file(Storage::path($this->getDailyLogFilePath())));
+        $this->assertEquals(2, $numlines);
+    }
+
+    /** @test */
+    public function itTakesAnOptionKeepfiles(): void
+    {
+        $this->createDailyLogs(5);
+
+        Artisan::call('logcleaner:run', ['--keepfiles' => 1]);
+
+        $logFiles = Storage::files(self::LOG_FOLDER_NAME);
+        $numLogFiles = count($logFiles);
+        $this->assertEquals(1, $numLogFiles);
+    }
+
     /**
      * Create the single laravel.log file, containing a given number of lines.
      *
