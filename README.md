@@ -5,8 +5,8 @@
 [![Quality Score](https://img.shields.io/scrutinizer/g/accentinteractive/laravel-logcleaner.svg?style=flat-square)](https://scrutinizer-ci.com/g/accentinteractive/laravel-logcleaner)
 [![Total Downloads](https://img.shields.io/packagist/dt/accentinteractive/laravel-logcleaner.svg?style=flat-square)](https://packagist.org/packages/accentinteractive/laravel-logcleaner)
 
-Logs can get quite out of hand. This package helps save server space and keep your logs files small.
-1. Trim your daily log to a given number of lines do it doen not grow huge.
+Logs can get quite out of hand. This package helps save server space and keep your Laravel log files small.
+1. Trim your daily log to a given number of lines do it does not grow huge.
 2. Delete old daily logs, only keeping a given number of the latest log files.
 
 - [Installation](#installation) 
@@ -38,20 +38,15 @@ php artisan logcleaner:run --help
 php artisan logcleaner:run
 
 // Pass the number of lines to keep when trimming log files. Overrides the config setting.
+// This overrides the default set in config
 php artisan logcleaner:run --keeplines=10000
 
 // Pass the number of files to keep when deleting old log files. Overrides the config setting.
+// This overrides the default set in config
 php artisan logcleaner:run --keepfiles=7
 
 // Run without actually cleaning any logs
 php artisan logcleaner:run --dry-run
- 
-// Clean your log files by cron job
-// Add to App\Console\Kernel
-protected function schedule(Schedule $schedule)
-{
-    $schedule->command('logcleaner:run')->daily()->at('01:00');
-}
 ```
 
 Cron job usage, add this to `App\Console\Kernel`:
