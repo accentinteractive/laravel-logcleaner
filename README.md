@@ -9,6 +9,9 @@ Logs can get quite out of hand. This package helps save server space and keep yo
 1. Trim your daily log to a given number of lines do it does not grow huge.
 2. Delete old daily logs, only keeping a given number of the latest log files.
 
+- Laravel 9 support as of 1.1.0. 
+- Versions before that support Laravel 6, 7, 8.
+
 - [Installation](#installation) 
 - [Examples](#usage) 
 - [Config settings](#config-settings)
