@@ -1,6 +1,9 @@
 # Changelog
 
 All notable changes to `laravel-logcleaner` will be documented in this file
+## 1.2.0 - 2023-04-26
+### Added
+- Added Laravel 10 support. Courtesy of https://github.com/niveshsaharan
 
 ## 1.1.0 - 2022-02-10
 ### Added
