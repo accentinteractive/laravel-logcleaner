@@ -12,7 +12,7 @@ use Orchestra\Testbench\TestCase;
 /**
  * Class LogCleanerTest
  */
-class LogCleanerTest extends TestCase
+final class LogCleanerTest extends TestCase
 {
 
     const LOG_FOLDER_NAME = 'testlogs';
