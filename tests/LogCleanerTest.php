@@ -2,6 +2,7 @@
 
 namespace Accentinteractive\LaravelLogcleaner\Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use Accentinteractive\LaravelLogcleaner\LaravelLogcleanerServiceProvider;
 use Artisan;
 use Config;
@@ -45,7 +46,7 @@ class LogCleanerTest extends TestCase
         $this->resetTestLogDirectory();
     }
 
-    /** @test */
+    #[Test]
     public function itTrimsTheSingleLog(): void
     {
         $this->createSingleLog($this->logLinesToKeep + 10);
@@ -56,7 +57,7 @@ class LogCleanerTest extends TestCase
         $this->assertEquals($this->logLinesToKeep, $numlines);
     }
 
-    /** @test */
+    #[Test]
     public function itDoesNotTrimLogsIfNotEnabled(): void
     {
         $this->createSingleLog($this->logLinesToKeep + 10);
@@ -68,7 +69,7 @@ class LogCleanerTest extends TestCase
         $this->assertEquals($this->logLinesToKeep + 10, $numlines);
     }
 
-    /** @test */
+    #[Test]
     public function itDoesNotTrimShortLogs(): void
     {
         $this->createSingleLog($this->logLinesToKeep - 1);
@@ -79,7 +80,7 @@ class LogCleanerTest extends TestCase
         $this->assertEquals($this->logLinesToKeep - 1, $numlines);
     }
 
-    /** @test */
+    #[Test]
     public function itDeletesOldLogs(): void
     {
         $this->createDailyLogs(20);
@@ -92,7 +93,7 @@ class LogCleanerTest extends TestCase
         $this->assertEquals($this->logFilesToKeep, $numLogFiles);
     }
 
-    /** @test */
+    #[Test]
     public function itDoesNotDeleteLogsIfNotEnabled(): void
     {
         $this->createDailyLogs(3);
@@ -106,7 +107,7 @@ class LogCleanerTest extends TestCase
         $this->assertEquals(3, $numLogFiles);
     }
 
-    /** @test */
+    #[Test]
     public function itOnlyDeletesLogFiles(): void
     {
         $logPath = $this->getLogPath();
@@ -120,7 +121,7 @@ class LogCleanerTest extends TestCase
         $this->assertEquals(1, $numLogFiles);
     }
 
-    /** @test */
+    #[Test]
     public function itCanExcludeFilesToDeletes(): void
     {
         $logPath = $this->getLogPath();
@@ -138,7 +139,7 @@ class LogCleanerTest extends TestCase
         $this->assertEquals(1, $numLogFiles);
     }
 
-    /** @test */
+    #[Test]
     public function excludeFileNamesSupportWildcards(): void
     {
         $logPath = $this->getLogPath();
@@ -158,7 +159,7 @@ class LogCleanerTest extends TestCase
         $this->assertEquals(2, $numLogFiles);
     }
 
-    /** @test */
+    #[Test]
     public function itDoesNotDeleteAnyLogsInDryRunMode(): void
     {
         $this->createSingleLog(1);
@@ -170,7 +171,7 @@ class LogCleanerTest extends TestCase
         $this->assertEquals(1, count($logFiles));
     }
 
-    /** @test */
+    #[Test]
     public function itTakesAnOptionKeeplines(): void
     {
         $this->createSingleLog(10);
@@ -181,7 +182,7 @@ class LogCleanerTest extends TestCase
         $this->assertEquals(2, $numlines);
     }
 
-    /** @test */
+    #[Test]
     public function itTakesAnOptionKeepfiles(): void
     {
         $this->createDailyLogs(5);
