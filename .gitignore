@@ -5,3 +5,6 @@
 /tests/testlogs
 /.phpunit.cache
 /.idea
+/tests/*.log
+/.phpunit.result.cache
+/tests/Users/
