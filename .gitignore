@@ -3,5 +3,5 @@
 /vendor
 /coverage
 /tests/testlogs
-/.phpunit.result.cache
+/.phpunit.cache
 /.idea
