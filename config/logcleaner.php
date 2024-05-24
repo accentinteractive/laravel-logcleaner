@@ -30,4 +30,12 @@ return [
      * E.g. '*.txt' will keep all text files from being trimmed or deleted.
      */
     'exclude' => [],
+
+    /*
+     * Process log files in subfolders. If this is set to true, trimming will
+     * also trim files in subfolders and deleting will keep only
+     * the most recent X number of files in each subfolder
+     * where X is the value of 'log_files_to_keep'.
+     */
+    'process_subfolders' => env('LOGCLEANER_PROCESS_SUBFOLDERS', true),
 ];
