@@ -70,6 +70,13 @@ protected function schedule(Schedule $schedule)
 }
 ```
 
+## Subfolder handling
+From version 1.4.0, files in subfolders are processed as well.
+
+- Trimming: all files in subfolder are trimmed.
+- Deleting: in each subfolder, all files except the N most recent ones are deleted. Where N equals config(`logcleaner.log_files_to_keep`).
+- Handling of subfolders is set to true by default, but can be overridden by `env('LOGCLEANER_PROCESS_SUBFOLDERS')`
+
 ## Config settings
 You can pass config settings to modify the behaviour.
 - `logcleaner.log_files_to_keep` : the number of log files to keep when deleting old log files. This config setting is overridden by option `--keepfiles` 
