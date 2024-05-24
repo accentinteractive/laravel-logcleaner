@@ -96,13 +96,20 @@ class Logcleaner extends Command
             return 'Found logs ' . json_encode($logFiles->toArray());
         }
 
-        $msg = '';
-        $logFilesToDelete = $logFiles->splice($this->getFilesToKeep());
-        foreach ($logFilesToDelete as $logFile) {
-            /* @var \Symfony\Component\Finder\SplFileInfo $logFile */
-            $msg .= $this->deleteFile($logFile->getRealPath()) . PHP_EOL;
+        // Arrange array into subfolders, so we can process each subfolder at a time
+        $logfilesInsubFolders = [];
+        foreach ($logFiles as $logFile) {
+            $logfilesInsubFolders[$logFile->getRelativePath()][] = $logFile;
         }
 
+        $msg = '';
+        foreach ($logfilesInsubFolders as $logfilesInsubFolder) {
+            $logFilesToDelete = array_splice($logfilesInsubFolder, $this->getFilesToKeep());
+            foreach ($logFilesToDelete as $logFile) {
+                /* @var \Symfony\Component\Finder\SplFileInfo $logFile */
+                $msg .= $this->deleteFile($logFile->getRealPath()) . PHP_EOL;
+            }
+        }
         return $msg;
     }
 
@@ -116,16 +123,21 @@ class Logcleaner extends Command
      */
     protected function getLaravelLogFilesCollection(string $logPath)
     {
-        $fileNames = File::files($logPath);
+        if (config('logcleaner.process_subfolders')) {
+            $fileNames = File::allFiles($logPath);
+        } else {
+            $fileNames = File::files($logPath);
+        }
+
         $fileNames = collect($fileNames)->filter(function ($item) {
             return $item->getExtension() == self::LOG_FILE_EXTENSION;
         });
 
         $logFiles = collect([]);
-        foreach ($fileNames as $logFile) {
+        foreach ($fileNames as $key => $logFile) {
             /* @var \Symfony\Component\Finder\SplFileInfo $logFile */
             if ($this->fileShouldBeProcessed($logFile->getFilename())) {
-                $logFiles->put($logFile->getMTime(), $logFile);
+                $logFiles->put($logFile->getMTime() . $key, $logFile);
             }
         }
 

@@ -72,11 +72,12 @@ protected function schedule(Schedule $schedule)
 
 ## Config settings
 You can pass config settings to modify the behaviour.
-- `log_files_to_keep` : the number of log files to keep when deleting old log files. This config setting is overridden by option `--keepfiles` 
-- `log_lines_to_keep` : the number of lines to leave intact when trimming log files. This config setting is overridden by option `--keeplines`
-- `exclude` : an array of filenames to exclude from processing, using wildcards. 
-- `trimming_enabled` : enables log file trimming. `true` by default. 
-- `deleting_enabled` : enables old log file deletions. `true` by default. 
+- `logcleaner.log_files_to_keep` : the number of log files to keep when deleting old log files. This config setting is overridden by option `--keepfiles` 
+- `logcleaner.log_lines_to_keep` : the number of lines to leave intact when trimming log files. This config setting is overridden by option `--keeplines`
+- `logcleaner.exclude` : an array of filenames to exclude from processing, using wildcards. 
+- `logcleaner.trimming_enabled` : enables log file trimming. `true` by default. 
+- `logcleaner.deleting_enabled` : enables old log file deletions. `true` by default. 
+- `logcleaner.process_subfolders` : whether to include files in subfolders. `true` by default. 
 
 You can also pass options directly. 
 - `--keeplines=2000`
