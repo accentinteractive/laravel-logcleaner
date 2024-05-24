@@ -134,10 +134,10 @@ class Logcleaner extends Command
         });
 
         $logFiles = collect([]);
-        foreach ($fileNames as $logFile) {
+        foreach ($fileNames as $key => $logFile) {
             /* @var \Symfony\Component\Finder\SplFileInfo $logFile */
             if ($this->fileShouldBeProcessed($logFile->getFilename())) {
-                $logFiles->put($logFile->getMTime(), $logFile);
+                $logFiles->put($logFile->getMTime() . $key, $logFile);
             }
         }
 
