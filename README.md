@@ -77,6 +77,17 @@ From version 1.4.0, files in subfolders are processed as well.
 - Deleting: in each subfolder, all files except the N most recent ones are deleted. Where N equals config(`logcleaner.log_files_to_keep`).
 - Handling of subfolders is set to true by default, but can be overridden by `env('LOGCLEANER_PROCESS_SUBFOLDERS')`
 
+## ENV variables
+
+You can set the following ENV variables in your .env file:
+
+- `LOGCLEANER_LOG_PATH` : The path to your logfile, relative from the root path of your application. If you do not supply `LOGCLEANER_LOG_PATH`, the default Laravel log path will be used. Example value: `storage/custom_logs`. 
+- `LOGCLEANER_TRIMMING_ENABLED` : Whether to trim log files to a certain number of lines or not. Defaults to `true` if not set in .env.
+- `LOGCLEANER_LOG_LINES_TO_KEEP` : The number of lines to keep when trimming files. Defaults to `20000` if not set in .env.
+- `LOGCLEANER_DELETING_ENABLED` : Whether to delete older log files or not. Defaults to `true` if not set in .env.
+- `LOGCLEANER_LOG_FILES_TO_KEEP` : The number of files to keep when deleting older log files. Defaults to `30` if not set in .env.
+- `LOGCLEANER_PROCESS_SUBFOLDERS` : Whether or not to process files in subfolders from the log path. Defaults to `true` if not set in .env.
+
 ## Config settings
 You can pass config settings to modify the behaviour.
 - `logcleaner.log_files_to_keep` : the number of log files to keep when deleting old log files. This config setting is overridden by option `--keepfiles` 
