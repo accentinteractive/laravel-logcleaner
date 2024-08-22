@@ -2,6 +2,7 @@
 
 namespace Accentinteractive\LaravelLogcleaner\Tests;
 
+use Illuminate\Support\Facades\File;
 use PHPUnit\Framework\Attributes\Test;
 use Accentinteractive\LaravelLogcleaner\LaravelLogcleanerServiceProvider;
 use Artisan;
@@ -282,6 +283,23 @@ final class LogCleanerTest extends TestCase
         $logFiles = Storage::files(self::LOG_FOLDER_NAME);
         $numLogFiles = count($logFiles);
         $this->assertEquals(1, $numLogFiles);
+    }
+
+    #[Test]
+    public function itCanHandleAnAlternativeLogPath(): void
+    {
+        $logFolder = self::LOG_FOLDER_NAME . '/alternative/';
+        $logPath = __DIR__ . '/' . $logFolder;
+        $this->createDailyLogs(10, $logFolder);
+
+        Config::set('logcleaner.log_path', storage_path('/../'));
+        Config::set('logcleaner.trimming_enabled', false);
+        Config::set('logcleaner.deleting_enabled', true);
+        Config::set('logcleaner.log_files_to_keep', 3);
+
+        Artisan::call('logcleaner:run');
+
+        $this->assertEquals(3, count(File::allFiles($logPath)));
     }
 
     /**

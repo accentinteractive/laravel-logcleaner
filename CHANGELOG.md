@@ -2,6 +2,13 @@
 
 All notable changes to `laravel-logcleaner` will be documented in this file
 
+## 1.5.0 - 2024-08-22
+### Added
+- Added support for the log path in `ENV('LOGCLEANER_LOG_PATH')`. This should be set as a path relative to the app root path, like `storage/custom_logpath`.
+- Added `LOGCLEANER_LOG_LINES_TO_KEEP` to be set in env file.
+- Added `LOGCLEANER_LOG_FILES_TO_KEEP` to be set in env file.
+- Added available env variables to README. 
+
 ## 1.4.0 - 2024-05-24
 ### Added
 - Added support to handle logfiles in subfolders. Can be set in config `logcleaner.process_subfolders`. Is set to `true` by default.
