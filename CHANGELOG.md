@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-logcleaner` will be documented in this file
 
+## 1.6.0 - 2025-02-21
+### Added
+- Added support for Laravel 12
+
 ## 1.5.0 - 2024-08-22
 ### Added
 - Added support for the log path in `ENV('LOGCLEANER_LOG_PATH')`. This should be set as a path relative to the app root path, like `storage/custom_logpath`.
