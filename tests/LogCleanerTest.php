@@ -185,7 +185,7 @@ final class LogCleanerTest extends TestCase
     }
 
     #[Test]
-    public function itTrimsFilesInSubfolders()
+    public function itTrimsFilesInSubfolders(): void
     {
         $mainFolder = self::LOG_FOLDER_NAME . '/' . self::DAILY_LOG_FILE;
         $subFolder1 = $mainFolder . self::LOG_SUBFOLDER_NAME . '/' . self::DAILY_LOG_FILE;
@@ -207,7 +207,7 @@ final class LogCleanerTest extends TestCase
     }
 
     #[Test]
-    public function itDoesNotTrimFilesInSubfoldersIfInstructed()
+    public function itDoesNotTrimFilesInSubfoldersIfInstructed(): void
     {
         config(['logcleaner.process_subfolders' => false]);
 
@@ -226,7 +226,7 @@ final class LogCleanerTest extends TestCase
     }
 
     #[Test]
-    public function itDeletesFilesInSubfolders()
+    public function itDeletesFilesInSubfolders(): void
     {
         $mainFolder = self::LOG_FOLDER_NAME . '/';
         $subFolder1 = $mainFolder . self::LOG_SUBFOLDER_NAME . '/';
@@ -253,7 +253,7 @@ final class LogCleanerTest extends TestCase
     }
 
     #[Test]
-    public function itDoesNotDeletesFilesInSubfoldersIfInstructed()
+    public function itDoesNotDeletesFilesInSubfoldersIfInstructed(): void
     {
         config(['logcleaner.process_subfolders' => false]);
 
